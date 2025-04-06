@@ -1,6 +1,6 @@
 {
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "./Dockerfile"
   },
   "deploy": {
     "startCommand": "./target/release/wstunnel --server ws://0.0.0.0:80"
