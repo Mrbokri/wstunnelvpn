@@ -1,22 +1,26 @@
-# Use the latest Rust image
-FROM rust:latest
+# Use Node.js as the base image
+FROM node:18
 
-# Set the working directory
-WORKDIR /app
+# Install OpenSSH Server
+RUN apt-get update && apt-get install -y openssh-server
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    libssl-dev \
-    pkg-config \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+# Create a user and set password (for SSH)
+RUN useradd -ms /bin/bash railwayuser
+RUN echo "railwayuser:yourpassword" | chpasswd
 
-# Clone the wstunnel repo and build it
-RUN git clone https://github.com/erebe/wstunnel.git .
-RUN cargo build --release
-
-# Expose port 80 for WebSocket traffic
+# Expose ports for SSH (22) and WebSocket/HTTP (80)
+EXPOSE 22
 EXPOSE 80
 
-# Run the wstunnel server on port 80
-CMD ["./target/release/wstunnel", "--server", "ws://0.0.0.0:80"]
+# Set the working directory for your app
+WORKDIR /app
+
+# Copy package.json and install dependencies
+COPY package.json /app/
+RUN npm install
+
+# Copy the rest of the application files
+COPY . /app
+
+# Start SSH server and your Node.js app (WebSocket/HTTP)
+CMD service ssh start && node server.js
