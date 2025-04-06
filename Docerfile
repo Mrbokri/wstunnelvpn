@@ -1,24 +1,22 @@
-# Use the official Rust image as a base
+# Use the latest Rust image
 FROM rust:latest
 
 # Set the working directory
 WORKDIR /app
 
-# Install required packages
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     libssl-dev \
     pkg-config \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Clone the wstunnel repository
+# Clone the wstunnel repo and build it
 RUN git clone https://github.com/erebe/wstunnel.git .
-
-# Build the wstunnel binary
 RUN cargo build --release
 
-# Expose port 80 for WebSocket connection
+# Expose port 80 for WebSocket traffic
 EXPOSE 80
 
-# Command to run the wstunnel server
+# Run the wstunnel server on port 80
 CMD ["./target/release/wstunnel", "--server", "ws://0.0.0.0:80"]
