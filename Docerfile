@@ -1,25 +1,10 @@
-# Start with the official Ubuntu base image
-FROM ubuntu:20.04
+FROM v2ray/official
 
-# Set the maintainer label
-LABEL maintainer="mrbokri01@gmail.com"
-
-# Update and install required packages
-RUN apt-get update && \
-    apt-get install -y curl unzip sudo gnupg2
-
-# Install V2Ray by downloading the official release
-RUN curl -L https://github.com/v2fly/v2ray-core/releases/download/v5.29.3/v2ray-linux-amd64-v5.29.3.tar.gz -o /tmp/v2ray.tar.gz && \
-    tar -xvf /tmp/v2ray.tar.gz -C /tmp && \
-    mv /tmp/v2ray-linux-amd64-v5.29.3 /usr/local/v2ray && \
-    rm /tmp/v2ray.tar.gz
-
-# Create V2Ray directory and copy your config.json
-RUN mkdir -p /etc/v2ray
+# Copy your config.json file into the container
 COPY config.json /etc/v2ray/config.json
 
-# Expose the required port (port 80 for WebSocket)
+# Expose the port (80 for WebSocket)
 EXPOSE 80
 
-# Set the command to run V2Ray
-CMD ["/usr/local/v2ray/v2ray", "-config", "/etc/v2ray/config.json"]
+# Command to run the V2Ray service
+CMD ["/usr/bin/v2ray", "-config", "/etc/v2ray/config.json"]
