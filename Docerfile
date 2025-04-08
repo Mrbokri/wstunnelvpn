@@ -2,7 +2,7 @@
 FROM ubuntu:20.04
 
 # Set the maintainer label
-LABEL maintainer="youremail@example.com"
+LABEL maintainer="mrbokri01@gmail.com"
 
 # Update and install required packages
 RUN apt-get update && \
