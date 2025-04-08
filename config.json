@@ -1,0 +1,41 @@
+{
+  "inbounds": [
+    {
+      "port": 80,  // The port you want to listen to (WebSocket port)
+      "listen": "0.0.0.0",  // Listen on all interfaces (use "127.0.0.1" for local access only)
+      "protocol": "vmess",  // VMess protocol
+      "settings": {
+        "clients": [
+          {
+            "id": "123e4567-e89b-12d3-a456-426614174000",  // Your UUID (replace with a valid UUID)
+            "alterId": 64,  // AlterId (commonly 64, must match the client config)
+            "security": "auto"  // Security setting (auto is fine)
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",  // Use WebSocket
+        "wsSettings": {
+          "path": "/v2ray"  // WebSocket path, you can customize this but it must match on both server and client
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",  // Default outbound protocol (direct internet access)
+      "settings": {}
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "outboundTag": "direct",
+        "domain": [
+          "geosite:cn"  // Optional, use if you want to route certain domains differently
+        ]
+      }
+    ]
+  }
+}
