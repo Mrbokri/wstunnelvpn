@@ -1,22 +1,32 @@
+# Use an official Ubuntu as a parent image
 FROM ubuntu:20.04
 
-# Install V2Ray dependencies
+# Set non-interactive mode to avoid prompts during build
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     curl \
+    git \
     sudo \
-    ca-certificates
+    unzip \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install V2Ray
-RUN curl -L https://github.com/v2fly/v2ray-core/releases/download/v5.29.3/v2ray-linux-amd64-v5.29.3.tar.gz -o /tmp/v2ray.tar.gz && \
-    tar -xvf /tmp/v2ray.tar.gz -C /tmp && \
-    mv /tmp/v2ray-linux-amd64-v5.29.3 /usr/local/v2ray && \
-    rm /tmp/v2ray.tar.gz
+# Clone the fhs-install-v2ray repository
+RUN git clone https://github.com/v2fly/fhs-install-v2ray.git /fhs-install-v2ray
 
-# Expose the necessary port for WebSocket
+# Set working directory to the fhs-install-v2ray folder
+WORKDIR /fhs-install-v2ray
+
+# Run the install-release.sh script to install V2Ray
+RUN sudo ./install-release.sh
+
+# Copy your custom config.json to the container
+COPY config.json /usr/local/etc/v2ray/config.json
+
+# Expose port 80 for WebSocket connections
 EXPOSE 80
 
-# Copy configuration file (ensure it's in the same folder as Dockerfile)
-COPY config.json /etc/v2ray/config.json
-
-# Start V2Ray
-CMD ["/usr/local/v2ray/v2ray", "-config", "/etc/v2ray/config.json"]
+# Run V2Ray with the appropriate configuration
+CMD ["/usr/local/bin/v2ray", "-config", "/usr/local/etc/v2ray/config.json"]
