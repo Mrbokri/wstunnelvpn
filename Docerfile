@@ -10,7 +10,7 @@ RUN apk add --no-cache \
     ca-certificates \
     && update-ca-certificates
 
-# Download and install V2Ray Core (v2ray only, no v2ctl)
+# Download and install V2Ray Core
 RUN curl -L -o /tmp/v2ray.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip \
     && unzip /tmp/v2ray.zip -d /tmp/v2ray \
     && install -m 755 /tmp/v2ray/v2ray /usr/local/bin/v2ray \
@@ -19,7 +19,7 @@ RUN curl -L -o /tmp/v2ray.zip https://github.com/v2fly/v2ray-core/releases/lates
     && mkdir -p /usr/local/etc/v2ray \
     && rm -rf /tmp/v2ray /tmp/v2ray.zip
 
-# Copy your V2Ray config
+# Copy config file
 COPY config.json /usr/local/etc/v2ray/config.json
 
 # Expose WebSocket port
